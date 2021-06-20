@@ -3,10 +3,10 @@ import qbs.Process
 import qbs.File
 import qbs.FileInfo
 import qbs.TextFile
-import "K:/Programming/OpenFrameworks_Mingw64/release_v0.11.2/libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
+import "../../../libs/openFrameworksCompiled/project/qtcreator/ofApp.qbs" as ofApp
 
 Project{
-    property string of_root: 'K:/Programming/OpenFrameworks_Mingw64/release_v0.11.2'
+    property string of_root: '../../..'
 
     ofApp {
         name: { return FileInfo.baseName(sourceDirectory) }
@@ -18,7 +18,7 @@ Project{
         ]
 
         of.addons: [
-            'ofxGui','ofxNetwork','ofxXmlSettings'
+            'ofxGui','ofxNetwork'
         ]
 
         // additional flags for the project. the of module sets some
