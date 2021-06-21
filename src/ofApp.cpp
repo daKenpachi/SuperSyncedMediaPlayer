@@ -2,17 +2,26 @@
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+    // ofSetVerticalSync(true);
 
+    m_videoPlayer.load("fingers.mov");
+    m_videoPlayer.setVolume(0.5);
+    m_videoPlayer.play();
+
+    //m_panel.setup();
+    //m_panel.add(m_label.setup("Labename", "Ahoi, Ophelia"));
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-
+    m_videoPlayer.update();
+    //m_videoPlayer.setSpeed(0.6);
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-
+    m_videoPlayer.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+    //m_panel.draw();
 }
 
 //--------------------------------------------------------------
