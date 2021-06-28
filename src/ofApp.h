@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxGui.h"
 #include "ofxXmlSettings.h"
+#include "ofxNetwork.h"
 
 class ofApp : public ofBaseApp{
 
@@ -30,8 +31,18 @@ public:
     ofVideoPlayer m_videoPlayer;
 
     ofxXmlSettings m_xmlSettings;
+    bool m_isServer;
+    
+    ofxTCPServer m_server;
+    ofxTCPClient m_client;
 
 private:
-    const std::string VIDEO_FILE_TAG = "VideoFile";
+    const std::string XML_TAG_VIDEO_FILE = "VideoFile";
+    const std::string XML_TAG_TCP = "TCP";
+    const std::string XML_TAG_PORT = "TCP:Port";
+    const std::string XML_TAG_IP_ADDRESS = "TCP:Address";
+    const std::string XML_TAG_TCP_MODE = "TCP:Mode";
+    const std::string MODE_SERVER = "Server";
+    const std::string MODE_CLIENT = "Client";
     const int OF_KEY_SPACE = 32;
 };
