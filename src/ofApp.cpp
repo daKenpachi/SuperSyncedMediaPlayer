@@ -27,6 +27,16 @@ void ofApp::draw(){
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 
+    if(key == OF_KEY_SPACE)
+    {
+        if(m_videoPlayer.isPlaying())
+        {
+            m_videoPlayer.setPaused(true);
+        }
+        else {
+            m_videoPlayer.setPaused(false);
+        }
+    }
 }
 
 //--------------------------------------------------------------

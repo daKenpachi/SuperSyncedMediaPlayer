@@ -27,4 +27,6 @@ public:
 
     ofxPanel m_videoControlPanel;
     ofVideoPlayer m_videoPlayer;
+    
+    const int OF_KEY_SPACE = 32;
 };
