@@ -18,7 +18,7 @@ Project{
         ]
 
         of.addons: [
-            'ofxGui','ofxNetwork'
+            'ofxGui','ofxNetwork','ofxXmlSettings'
         ]
 
         // additional flags for the project. the of module sets some

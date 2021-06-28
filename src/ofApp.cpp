@@ -4,7 +4,10 @@
 void ofApp::setup(){
     // ofSetVerticalSync(true);
 
-    m_videoPlayer.load("fingers.mov");
+    m_xmlSettings.loadFile("settings.xml");
+    string videoName = m_xmlSettings.getValue(VIDEO_FILE_TAG,"fingers.mov");
+
+    m_videoPlayer.load(videoName);
     m_videoPlayer.setVolume(0.5);
     m_videoPlayer.play();
 

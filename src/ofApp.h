@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxGui.h"
+#include "ofxXmlSettings.h"
 
 class ofApp : public ofBaseApp{
 
@@ -27,4 +28,9 @@ public:
 
     ofxPanel m_videoControlPanel;
     ofVideoPlayer m_videoPlayer;
+
+    ofxXmlSettings m_xmlSettings;
+
+private:
+    const std::string VIDEO_FILE_TAG = "VideoFile";
 };
