@@ -33,4 +33,5 @@ public:
 
 private:
     const std::string VIDEO_FILE_TAG = "VideoFile";
+    const int OF_KEY_SPACE = 32;
 };
