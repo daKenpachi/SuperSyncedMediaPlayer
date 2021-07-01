@@ -6,25 +6,12 @@ void ofApp::setup(){
 
     m_xmlSettings.loadFile("settings.xml");
     std::string videoName = m_xmlSettings.getValue(XML_TAG_VIDEO_FILE,"fingers.mov");
-    int port = m_xmlSettings.getValue(XML_TAG_PORT, 0);
-    std::string ipAddress = m_xmlSettings.getValue(XML_TAG_IP_ADDRESS, "localhost");
-    std::string tcpMode = m_xmlSettings.getValue(XML_TAG_TCP_MODE, "Client");
-    
-    if (tcpMode == MODE_CLIENT){
-        m_isServer = false;
-        bool success = m_client.setup(ipAddress, port);
-    }
-    else if (tcpMode == MODE_SERVER) {
-        m_isServer = true;
-        bool success = m_server.setup(port);
-    }
-    else {
-        // TODO this is not working - inform user!
-    }
-
     m_videoPlayer.load(videoName);
+    
+    m_syncManager.setup(m_xmlSettings, &m_videoPlayer);
+    
     m_videoPlayer.setVolume(0.5);
-    m_videoPlayer.play();
+    //m_videoPlayer.play();
 
     //m_panel.setup();
     //m_panel.add(m_label.setup("Labename", "Ahoi, Ophelia"));
