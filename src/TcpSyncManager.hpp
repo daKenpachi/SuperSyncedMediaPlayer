@@ -21,6 +21,9 @@ public:
     void setup(const ofxXmlSettings& settings, ofVideoPlayer* const player);
     void update();
     
+    void playAllVideos();
+    void pauseAllVideos();
+    
     const std::string XML_TAG_TCP = "TCP";
     const std::string XML_TAG_PORT = "TCP:Port";
     const std::string XML_TAG_IP_ADDRESS = "TCP:Address";
@@ -36,7 +39,7 @@ private:
     ofxTCPServer m_server;
     ofxTCPClient m_client;
     
-    std::vector<int> m_validClientIds;
+    std::set<int> m_validClientIds;
     
     ofVideoPlayer* m_player = NULL;
     

@@ -11,7 +11,8 @@ void ofApp::setup(){
     m_syncManager.setup(m_xmlSettings, &m_videoPlayer);
     
     m_videoPlayer.setVolume(0.5);
-    //m_videoPlayer.play();
+    m_videoPlayer.play();
+    m_videoPlayer.setPaused(true);
 
     //m_panel.setup();
     //m_panel.add(m_label.setup("Labename", "Ahoi, Ophelia"));
@@ -19,6 +20,7 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    m_syncManager.update();
     m_videoPlayer.update();
     //m_videoPlayer.setSpeed(0.6);
 }
@@ -36,10 +38,10 @@ void ofApp::keyPressed(int key){
     {
         if(m_videoPlayer.isPlaying())
         {
-            m_videoPlayer.setPaused(true);
+            m_syncManager.pauseAllVideos();
         }
         else {
-            m_videoPlayer.setPaused(false);
+            m_syncManager.playAllVideos();
         }
     }
 }

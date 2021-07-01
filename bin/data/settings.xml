@@ -3,6 +3,6 @@
 <VideoFile>fingers.mov</VideoFile>
 <TCP>
     <Mode>Server</Mode>
-    <Port>64464</Port>
+    <Port>4464</Port>
     <Address>127.0.0.1</Address>
 </TCP>
