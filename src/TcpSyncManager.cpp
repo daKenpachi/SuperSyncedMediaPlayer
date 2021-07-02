@@ -15,7 +15,8 @@ void TcpSyncManager::setup(const ofxXmlSettings& settings, ofVideoPlayer* const 
     std::string ipAddress = settings.getValue(XML_TAG_IP_ADDRESS, "localhost");
     std::string tcpMode = settings.getValue(XML_TAG_TCP_MODE, "Client");
     
-    if (tcpMode == MODE_CLIENT){
+    if (tcpMode == MODE_CLIENT)
+    {
         m_isServer = false;
         bool success = m_client.setup(ipAddress, port);
         if (success) {
@@ -26,7 +27,8 @@ void TcpSyncManager::setup(const ofxXmlSettings& settings, ofVideoPlayer* const 
             ofLogError() << "Could not connect to server at " << ipAddress << ":" << port << flush;
         }
     }
-    else if (tcpMode == MODE_SERVER) {
+    else if (tcpMode == MODE_SERVER) 
+    {
         m_isServer = true;
         bool success = m_server.setup(port);
         if (success) {
@@ -68,9 +70,19 @@ void TcpSyncManager::update()
                             // TODO - reject client?
                         }
                     }
-                    else
+                    else if (msg == CMD_PLAY)
                     {
-                        // TODO client valid - react to message
+                        ofLogNotice() << "PLAY command received from client " << i << flush;
+                        playAllVideos();
+                    }
+                    else if (msg == CMD_PAUSE)
+                    {
+                        ofLogNotice() << "PAUSE command received from client " << i << flush;
+                        pauseAllVideos();
+                    }
+                    else if (msg != "")
+                    {
+                        ofLogWarning() << "Unkown message received from client " << i << ": " << msg << flush;
                     }
                 }
             }
@@ -93,7 +105,7 @@ void TcpSyncManager::update()
             }
             else if (msg != "")
             {
-                ofLogError()  << "Unkown message received from server: " << msg << flush;
+                ofLogWarning()  << "Unkown message received from server: " << msg << flush;
             }
         }
     }
@@ -120,6 +132,12 @@ void TcpSyncManager::playAllVideos()
             m_player->setPaused(false);
         }
     }
+    else {
+        if (m_client.isConnected())
+        {
+            m_client.send(CMD_PLAY);
+        }
+    }
 }
 
 void TcpSyncManager::pauseAllVideos()
@@ -142,5 +160,11 @@ void TcpSyncManager::pauseAllVideos()
             }
         }
         m_player->setPaused(true);
+    }
+    else {
+        if (m_client.isConnected())
+        {
+            m_client.send(CMD_PAUSE);
+        }
     }
 }
