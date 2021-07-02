@@ -38,6 +38,9 @@ public:
 
 private:
     const std::string XML_TAG_VIDEO_FILE = "VideoFile";
+    const std::string XML_TAG_LOGGING_FILE = "LoggingFile";
+
+    const std::string LOG_HEADER = " -- Started SuperSyncedMediaPlayer -- ";
 
     const int OF_KEY_SPACE = 32;
 };

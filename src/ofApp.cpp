@@ -5,6 +5,13 @@ void ofApp::setup(){
     // ofSetVerticalSync(true);
 
     m_xmlSettings.loadFile("settings.xml");
+    string loggingFile = m_xmlSettings.getValue(XML_TAG_LOGGING_FILE, "");
+    if (loggingFile != "")
+    {
+        ofLogToFile(loggingFile, true);
+        ofLogNotice() << LOG_HEADER;
+    }
+
     std::string videoName = m_xmlSettings.getValue(XML_TAG_VIDEO_FILE,"fingers.mov");
     m_videoPlayer.load(videoName);
     
