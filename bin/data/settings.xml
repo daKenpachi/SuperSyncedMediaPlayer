@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <group />
-<VideoFile>fingers.mov</VideoFile>
+<VideoFile>drums.mp4</VideoFile>
 <LoggingFile>log.txt</LoggingFile>
 <TCP>
     <Mode>Server</Mode>
