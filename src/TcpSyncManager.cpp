@@ -49,44 +49,7 @@ void TcpSyncManager::update()
 {
     if (m_isServer)
     {
-        if (m_server.isConnected())
-        {
-            for(int i = 0; i <  m_server.getLastID(); i++)
-            {
-                if (m_server.isClientConnected(i))
-                {
-
-                    string msg = m_server.receive(i);
-                    if (m_validClientIds.find(i) != m_validClientIds.end())
-                    {
-                        // client has to validate itself
-                        if (msg == CMD_HELLO)
-                        {
-                            m_validClientIds.insert(i);
-                            ofLogError()  << "Client " << i << " connected successfully" << flush;
-                        }
-                        else
-                        {
-                            // TODO - reject client?
-                        }
-                    }
-                    else if (msg == CMD_PLAY)
-                    {
-                        ofLogNotice() << "PLAY command received from client " << i << flush;
-                        playAllVideos();
-                    }
-                    else if (msg == CMD_PAUSE)
-                    {
-                        ofLogNotice() << "PAUSE command received from client " << i << flush;
-                        pauseAllVideos();
-                    }
-                    else if (msg != "")
-                    {
-                        ofLogWarning() << "Unkown message received from client " << i << ": " << msg << flush;
-                    }
-                }
-            }
-        }
+        updateAsServer();
     }
     else
     {
@@ -111,6 +74,72 @@ void TcpSyncManager::update()
     }
 }
 
+void TcpSyncManager::updateAsServer()
+{
+    if (m_server.isConnected())
+    {
+        for(unsigned int i = 0; i <  m_server.getLastID(); i++)
+        {
+            if (m_server.isClientConnected(i))
+            {
+
+                string msg = m_server.receive(i);
+                if (!m_validClientIds.hasId(i)) {
+                    // client not valid yet
+                    m_validClientIds.addId(); // internal increment will follow client increment
+                    ofLogNotice() << "Client " << i << " at " << m_server.getClientIP(i) << " tries to connect" << flush;
+                }
+                if (m_validClientIds.hasId(i))
+                {
+                    if (!m_validClientIds.isIdValid(i))
+                    {
+                        // check for handshake message
+                        if (msg == CMD_HELLO)
+                        {
+                            m_validClientIds.validIds.at(i) = true;
+                            ofLogNotice() << "Client " << i << " at " << m_server.getClientIP(i) << " successfully connected" << flush;
+                            m_server.send(i, CMD_HELLO);
+                        }
+                        else
+                        {
+                            m_validClientIds.retries.at(i) = m_validClientIds.retries.at(i) + 1;
+                            if (m_validClientIds.retries.at(i) <= MAX_HANDSHAKE_RETRIES)
+                            {
+                                // client did not send right command - reject
+                                m_server.disconnectClient(i);
+                                ofLogWarning() << "Client " << i << " at " << m_server.getClientIP(i) << " was rejected due to handshake timeout" << flush;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        checkMessageAsServer(msg, i);
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+void TcpSyncManager::checkMessageAsServer(const std::string& msg, int clientid)
+{
+    if (msg == CMD_PLAY)
+    {
+        ofLogNotice() << "PLAY command received from client " << clientid << flush;
+        playAllVideos();
+    }
+    else if (msg == CMD_PAUSE)
+    {
+        ofLogNotice() << "PAUSE command received from client " << clientid << flush;
+        pauseAllVideos();
+    }
+    else if (msg != "")
+    {
+        ofLogWarning() << "Unkown message received from client " << clientid << ": " << msg << flush;
+    }
+}
+
 void TcpSyncManager::playAllVideos()
 {
     if (m_isServer)
@@ -118,10 +147,7 @@ void TcpSyncManager::playAllVideos()
         if (m_server.isConnected())
         {
             ofLogNotice() << "sending PLAY command" << flush;
-            //for (auto iter = m_validClientIds.begin(); iter != m_validClientIds.end(); iter++)
-            //{
-            //    m_server.send(*iter, CMD_PLAY);
-            //}
+
             for (int i = 0; i < m_server.getLastID(); i++)
             {
                 if (m_server.isClientConnected(i)) {
@@ -147,10 +173,7 @@ void TcpSyncManager::pauseAllVideos()
         if (m_server.isConnected())
         {
             ofLogNotice() << "sending PAUSE command" << flush;
-            //for (auto iter = m_validClientIds.begin(); iter != m_validClientIds.end(); iter++)
-            //{
-            //    m_server.send(*iter, CMD_PAUSE);
-            //}
+
             for (int i = 0; i < m_server.getLastID(); i++)
             {
                 if (m_server.isClientConnected(i)) {
