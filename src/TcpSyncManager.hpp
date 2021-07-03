@@ -33,7 +33,7 @@ public:
     const std::string MODE_CLIENT = "Client";
     const std::string MODE_AUTO = "Automatic";
 
-    const int MAX_HANDSHAKE_RETRIES = 10;
+    const int MAX_HANDSHAKE_RETRIES = 5;
     
 private:
     typedef struct {

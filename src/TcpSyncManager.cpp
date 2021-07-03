@@ -100,14 +100,15 @@ void TcpSyncManager::updateAsServer()
                             ofLogNotice() << "Client " << i << " at " << m_server.getClientIP(i) << " successfully connected" << flush;
                             m_server.send(i, CMD_HELLO);
                         }
-                        else
+                        else if (msg != "")
                         {
                             m_validClientIds.retries.at(i) = m_validClientIds.retries.at(i) + 1;
-                            if (m_validClientIds.retries.at(i) <= MAX_HANDSHAKE_RETRIES)
+                            if (m_validClientIds.retries.at(i) >= MAX_HANDSHAKE_RETRIES)
                             {
                                 // client did not send right command - reject
+                                ofLogWarning() << "Client " << i << " at " << m_server.getClientIP(i) << " was rejected due to handshake timeout"
+                                               << " after " << m_validClientIds.retries.at(i) << " retries" << flush;
                                 m_server.disconnectClient(i);
-                                ofLogWarning() << "Client " << i << " at " << m_server.getClientIP(i) << " was rejected due to handshake timeout" << flush;
                             }
                         }
                     }
