@@ -27,7 +27,6 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    m_syncManager.update();
     m_videoPlayer.update();
     //m_videoPlayer.setSpeed(0.6);
 }

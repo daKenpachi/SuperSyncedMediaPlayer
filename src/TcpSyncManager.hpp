@@ -12,14 +12,13 @@
 #include <ofxNetwork.h>
 #include <ofxXmlSettings.h>
 
-class TcpSyncManager
+class TcpSyncManager : public ofThread
 {
 public:
     TcpSyncManager() {}
-    virtual ~TcpSyncManager() {}
+    virtual ~TcpSyncManager();
     
     void setup(const ofxXmlSettings& settings, ofVideoPlayer* const player);
-    void update();
     
     void playAllVideos();
     void pauseAllVideos();
@@ -36,6 +35,11 @@ public:
     const int MAX_HANDSHAKE_RETRIES = 5;
     
 private:
+    void update();
+
+    void threadedFunction(); 
+   
+
     typedef struct {
         std::vector<bool> validIds;
         std::vector<int> retries;

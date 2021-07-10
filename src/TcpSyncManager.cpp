@@ -7,7 +7,12 @@
 
 #include "TcpSyncManager.hpp"
 
-
+TcpSyncManager::~TcpSyncManager()
+{
+    if (isThreadRunning()) {
+        stopThread();
+    }
+}
 
 void TcpSyncManager::setup(const ofxXmlSettings& settings, ofVideoPlayer* const player)
 {
@@ -43,6 +48,8 @@ void TcpSyncManager::setup(const ofxXmlSettings& settings, ofVideoPlayer* const 
         ofLogError()  << "No valid TCP setting!";
     }
     m_player = player;
+
+    this->startThread();
 }
 
 void TcpSyncManager::update()
@@ -190,5 +197,20 @@ void TcpSyncManager::pauseAllVideos()
         {
             m_client.send(CMD_PAUSE);
         }
+    }
+}
+
+void TcpSyncManager::threadedFunction()
+{
+    {
+
+        // start
+
+        while (isThreadRunning()) {
+            update();
+
+        }
+
+        // done
     }
 }
