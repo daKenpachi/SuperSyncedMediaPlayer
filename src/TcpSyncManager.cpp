@@ -58,6 +58,7 @@ void TcpSyncManager::setup(const ofxXmlSettings& settings, ofVideoPlayer* const 
     m_player = player;
 
     this->startThread();
+    m_waitTimer.startThread();
 }
 
 void TcpSyncManager::update()
@@ -78,18 +79,17 @@ void TcpSyncManager::update()
             else if (ofIsStringInString(msg,CMD_PLAY))
             {
                 std::vector<std::string> msgParts = ofSplitString(msg, CMD_DELIMITER);
-                m_systemTimeForAction = ofToInt64(msgParts.at(1));
                 m_nextAction = PLAY_ACTION;
-                m_waitTimer.startThread();
-                ofLogNotice() << "PLAY received from server" << flush;
+                setNextActionTime(ofToInt64(msgParts.at(1)));
+                ofLogNotice() << "PLAY received from server: " << msg << flush;
             }
             else if (ofIsStringInString(msg, CMD_PAUSE))
             {
                 std::vector<std::string> msgParts = ofSplitString(msg, CMD_DELIMITER);
-                m_systemTimeForAction = ofToInt64(msgParts.at(1));
                 m_nextAction = PAUSE_ACTION;
-                m_waitTimer.startThread();
-                ofLogNotice() << "PAUSE received from server" << flush;
+                setNextActionTime(ofToInt64(msgParts.at(1)));
+                
+                ofLogNotice() << "PAUSE received from server" << msg << flush;
             }
             else
             {
@@ -174,7 +174,7 @@ void TcpSyncManager::playAllVideos()
         {
             ofLogNotice() << "sending PLAY command" << flush;
             calcNextActionTime();
-            std::string playCommand = CMD_PLAY + CMD_DELIMITER + ofToString(m_systemTimeForAction);
+            std::string playCommand = CMD_PLAY + CMD_DELIMITER + ofToString(m_timeForAction);
 
             for (int i = 0; i < m_server.getLastID(); i++)
             {
@@ -184,7 +184,7 @@ void TcpSyncManager::playAllVideos()
                 }
             }
             m_nextAction = PLAY_ACTION;
-            m_waitTimer.startThread();
+            ofLogNotice() << "sended: " << playCommand << flush;
         }
     }
     else {
@@ -204,7 +204,7 @@ void TcpSyncManager::pauseAllVideos()
             ofLogNotice() << "sending PAUSE command" << flush;
 
             calcNextActionTime();
-            std::string pauseCommand = CMD_PAUSE + CMD_DELIMITER + ofToString(m_systemTimeForAction);
+            std::string pauseCommand = CMD_PAUSE + CMD_DELIMITER + ofToString(m_timeForAction);
 
             for (int i = 0; i < m_server.getLastID(); i++)
             {
@@ -214,9 +214,7 @@ void TcpSyncManager::pauseAllVideos()
                 }
             }
             m_nextAction = PAUSE_ACTION;
-            m_waitTimer.startThread();
         }
-        m_player->setPaused(true);
     }
     else {
         if (m_client.isConnected())
@@ -238,7 +236,7 @@ void TcpSyncManager::threadedFunction()
 
 void TcpSyncManager::doAction()
 {
-    m_systemTimeForAction = 0;
+    setNextActionTime(0);
     switch (m_nextAction)
     {
     case PLAY_ACTION:
@@ -270,12 +268,20 @@ void TcpSyncManager::doAction()
 void TcpSyncManager::calcNextActionTime()
 {
     uint64_t currentTimeMillis = ofGetSystemTimeMillis();
-    m_systemTimeForAction = ((currentTimeMillis / 100) * 100) + TIME_OFFSET_FOR_COMMANDS;
+    setNextActionTime(((currentTimeMillis / 100) * 100) + TIME_OFFSET_FOR_COMMANDS);
+}
+
+void TcpSyncManager::setNextActionTime(uint64_t time)
+{
+    m_waitTimer.lock();
+    m_timeForAction = time;
+    m_waitTimer.unlock();
 }
 
 TcpSyncManager::WaitTimer::WaitTimer(TcpSyncManager* parent)
 {
     m_parent = parent;
+    m_timer.setPeriodicEvent(1000000);
 }
 
 TcpSyncManager::WaitTimer::~WaitTimer()
@@ -290,13 +296,14 @@ void TcpSyncManager::WaitTimer::threadedFunction()
 {
 
     while (isThreadRunning()) {
-        if (m_parent->m_systemTimeForAction != 0)
+        m_timer.waitNext();
+        if (m_parent->m_timeForAction != 0)
         {
-            // TODO use mutex!
-            if (ofGetSystemTimeMillis() >= m_parent->m_systemTimeForAction)
+            uint64_t currentTime = ofGetSystemTimeMillis();
+            if (currentTime >= m_parent->m_timeForAction)
             {
+                ofLogNotice() << currentTime << " - " << m_parent->m_timeForAction << flush;
                 m_parent->doAction();
-                stopThread();
             }
         }
     }

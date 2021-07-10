@@ -44,6 +44,7 @@ private:
         ~WaitTimer();
         void threadedFunction();
     private :
+        ofTimer m_timer;
         TcpSyncManager* m_parent;
     };
    
@@ -78,6 +79,7 @@ private:
     void threadedFunction(); 
     void doAction();
     void calcNextActionTime();
+    void setNextActionTime(uint64_t time);
 
     bool m_isServer;
     
@@ -95,7 +97,7 @@ private:
 
     NextAction m_nextAction = NO_ACTION;
     WaitTimer m_waitTimer;
-    uint64_t m_systemTimeForAction = 0;
+    uint64_t m_timeForAction = 0;
 
     void updateAsServer();
     void checkMessageAsServer(const std::string& msg, int clientid);
