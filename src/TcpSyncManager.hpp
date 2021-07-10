@@ -41,7 +41,7 @@ private:
     {
     public:
         WaitTimer(TcpSyncManager* parent);
-        ~WaitTimer();
+        virtual ~WaitTimer();
         void threadedFunction();
     private :
         ofTimer m_timer;

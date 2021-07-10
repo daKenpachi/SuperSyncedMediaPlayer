@@ -15,7 +15,7 @@ TcpSyncManager::~TcpSyncManager()
 {
     if (m_waitTimer.isThreadRunning())
     {
-        m_waitTimer.stopThread();
+        m_waitTimer.waitForThread();
     }
     if (isThreadRunning()) {
         stopThread();
