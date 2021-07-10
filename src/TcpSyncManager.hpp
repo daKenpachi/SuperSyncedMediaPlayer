@@ -15,7 +15,7 @@
 class TcpSyncManager : public ofThread
 {
 public:
-    TcpSyncManager() {}
+    TcpSyncManager();
     virtual ~TcpSyncManager();
     
     void setup(const ofxXmlSettings& settings, ofVideoPlayer* const player);
@@ -33,12 +33,26 @@ public:
     const std::string MODE_AUTO = "Automatic";
 
     const int MAX_HANDSHAKE_RETRIES = 5;
+    const int TIME_OFFSET_FOR_COMMANDS = 500;
     
 private:
-    void update();
 
-    void threadedFunction(); 
+    class WaitTimer : public ofThread
+    {
+    public:
+        WaitTimer(TcpSyncManager* parent);
+        ~WaitTimer();
+        void threadedFunction();
+    private :
+        TcpSyncManager* m_parent;
+    };
    
+    typedef enum {
+        NO_ACTION,
+        PLAY_ACTION,
+        PAUSE_ACTION,
+        STOP_ACTION
+    }NextAction;
 
     typedef struct {
         std::vector<bool> validIds;
@@ -60,6 +74,10 @@ private:
         }
     } ClientValidationList;
 
+    void update();
+    void threadedFunction(); 
+    void doAction();
+
     bool m_isServer;
     
     ofxTCPServer m_server;
@@ -72,6 +90,11 @@ private:
     const std::string CMD_PLAY = "SuperSync_Play";
     const std::string CMD_PAUSE = "SuperSync_Pause";
     const std::string CMD_HELLO = "SuperSync_Hello";
+    const std::string CMD_DELIMITER = ":::";
+
+    NextAction m_nextAction = NO_ACTION;
+    WaitTimer m_waitTimer;
+    uint64_t m_systemTimeForAction = 0;
 
     void updateAsServer();
     void checkMessageAsServer(const std::string& msg, int clientid);
