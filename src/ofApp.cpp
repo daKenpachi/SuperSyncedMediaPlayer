@@ -8,7 +8,9 @@ void ofApp::setup(){
     string loggingFile = m_xmlSettings.getValue(XML_TAG_LOGGING_FILE, "");
     if (loggingFile != "")
     {
+#ifndef NDEBUG
         ofLogToFile(loggingFile, true);
+#endif
         ofLogNotice() << LOG_HEADER;
     }
 

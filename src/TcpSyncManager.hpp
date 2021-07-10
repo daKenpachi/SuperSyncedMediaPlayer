@@ -77,6 +77,7 @@ private:
     void update();
     void threadedFunction(); 
     void doAction();
+    void calcNextActionTime();
 
     bool m_isServer;
     

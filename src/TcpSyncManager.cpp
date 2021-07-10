@@ -83,7 +83,7 @@ void TcpSyncManager::update()
                 m_waitTimer.startThread();
                 ofLogNotice() << "PLAY received from server" << flush;
             }
-            else if (msg == CMD_PAUSE)
+            else if (ofIsStringInString(msg, CMD_PAUSE))
             {
                 std::vector<std::string> msgParts = ofSplitString(msg, CMD_DELIMITER);
                 m_systemTimeForAction = ofToInt64(msgParts.at(1));
@@ -173,8 +173,7 @@ void TcpSyncManager::playAllVideos()
         if (m_server.isConnected())
         {
             ofLogNotice() << "sending PLAY command" << flush;
-            uint64_t currentTimeMillis = ofGetSystemTimeMillis();
-            m_systemTimeForAction = ((currentTimeMillis / 1000) * 1000) + TIME_OFFSET_FOR_COMMANDS;
+            calcNextActionTime();
             std::string playCommand = CMD_PLAY + CMD_DELIMITER + ofToString(m_systemTimeForAction);
 
             for (int i = 0; i < m_server.getLastID(); i++)
@@ -204,8 +203,7 @@ void TcpSyncManager::pauseAllVideos()
         {
             ofLogNotice() << "sending PAUSE command" << flush;
 
-            uint64_t currentTimeMillis = ofGetSystemTimeMillis();
-            m_systemTimeForAction = ((currentTimeMillis / 1000) * 1000) + TIME_OFFSET_FOR_COMMANDS;
+            calcNextActionTime();
             std::string pauseCommand = CMD_PAUSE + CMD_DELIMITER + ofToString(m_systemTimeForAction);
 
             for (int i = 0; i < m_server.getLastID(); i++)
@@ -267,6 +265,12 @@ void TcpSyncManager::doAction()
         break;
     }
     m_nextAction = NO_ACTION;
+}
+
+void TcpSyncManager::calcNextActionTime()
+{
+    uint64_t currentTimeMillis = ofGetSystemTimeMillis();
+    m_systemTimeForAction = ((currentTimeMillis / 100) * 100) + TIME_OFFSET_FOR_COMMANDS;
 }
 
 TcpSyncManager::WaitTimer::WaitTimer(TcpSyncManager* parent)
