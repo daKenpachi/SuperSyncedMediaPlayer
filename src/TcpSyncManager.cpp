@@ -6,6 +6,7 @@
 //
 
 #include "TcpSyncManager.hpp"
+#include <chrono>
 
 TcpSyncManager::TcpSyncManager(): m_waitTimer(this)
 {
@@ -59,7 +60,8 @@ void TcpSyncManager::setup(const ofxXmlSettings& settings, ofVideoPlayer* const 
 
     this->startThread();
     m_waitTimer.startThread();
-    ofLogNotice() << "Current system time ms: " << ofGetCurrentTime().getAsMilliseconds();
+    ofLogNotice() << "Current system time ms: " << ofGetCurrentTime().getAsMilliseconds() << flush;
+    ofLogNotice() << " in Unix Epoch time ms: " << getUnixTimestampMs() << flush;
 }
 
 void TcpSyncManager::update()
@@ -225,6 +227,12 @@ void TcpSyncManager::pauseAllVideos()
     }
 }
 
+uint64_t TcpSyncManager::getUnixTimestampMs()
+{
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+        std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
 void TcpSyncManager::threadedFunction()
 {
         // start
@@ -268,7 +276,7 @@ void TcpSyncManager::doAction()
 
 void TcpSyncManager::calcNextActionTime()
 {
-    uint64_t currentTimeMillis = ofGetCurrentTime().getAsMilliseconds();
+    uint64_t currentTimeMillis = getUnixTimestampMs();
     setNextActionTime(((currentTimeMillis / 100) * 100) + TIME_OFFSET_FOR_COMMANDS);
 }
 
@@ -300,7 +308,7 @@ void TcpSyncManager::WaitTimer::threadedFunction()
         m_timer.waitNext();
         if (m_parent->m_timeForAction != 0)
         {
-            uint64_t currentTime = ofGetCurrentTime().getAsMilliseconds();
+            uint64_t currentTime = getUnixTimestampMs();
             if (currentTime >= m_parent->m_timeForAction)
             {
                 ofLogNotice() << currentTime << " - " << m_parent->m_timeForAction << flush;

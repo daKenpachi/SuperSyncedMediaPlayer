@@ -22,6 +22,8 @@ public:
     
     void playAllVideos();
     void pauseAllVideos();
+
+    static uint64_t getUnixTimestampMs();
     
     const std::string XML_TAG_TCP = "TCP";
     const std::string XML_TAG_PORT = "TCP:Port";
