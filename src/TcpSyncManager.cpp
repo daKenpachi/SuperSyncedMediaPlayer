@@ -72,33 +72,7 @@ void TcpSyncManager::update()
     }
     else
     {
-        if (m_client.isConnected())
-        {
-            string msg = m_client.receive();
-            if (msg == "")
-            {
-                // Nothing to do here
-            }
-            else if (ofIsStringInString(msg,CMD_PLAY))
-            {
-                std::vector<std::string> msgParts = ofSplitString(msg, CMD_DELIMITER);
-                m_nextAction = PLAY_ACTION;
-                setNextActionTime(ofToInt64(msgParts.at(1)));
-                ofLogNotice() << "PLAY received from server: " << msg << flush;
-            }
-            else if (ofIsStringInString(msg, CMD_PAUSE))
-            {
-                std::vector<std::string> msgParts = ofSplitString(msg, CMD_DELIMITER);
-                m_nextAction = PAUSE_ACTION;
-                setNextActionTime(ofToInt64(msgParts.at(1)));
-                
-                ofLogNotice() << "PAUSE received from server" << msg << flush;
-            }
-            else
-            {
-                ofLogWarning()  << "Unkown message received from server: " << msg << flush;
-            }
-        }
+        updateAsClient();
     }
 }
 
@@ -149,6 +123,38 @@ void TcpSyncManager::updateAsServer()
             }
         }
     }
+}
+
+void TcpSyncManager::updateAsClient()
+{
+    if (m_client.isConnected())
+    {
+        string msg = m_client.receive();
+        if (msg == "")
+        {
+            // Nothing to do here
+        }
+        else if (ofIsStringInString(msg,CMD_PLAY))
+        {
+            std::vector<std::string> msgParts = ofSplitString(msg, CMD_DELIMITER);
+            m_nextAction = PLAY_ACTION;
+            setNextActionTime(ofToInt64(msgParts.at(1)));
+            ofLogNotice() << "PLAY received from server: " << msg << flush;
+        }
+        else if (ofIsStringInString(msg, CMD_PAUSE))
+        {
+            std::vector<std::string> msgParts = ofSplitString(msg, CMD_DELIMITER);
+            m_nextAction = PAUSE_ACTION;
+            setNextActionTime(ofToInt64(msgParts.at(1)));
+
+            ofLogNotice() << "PAUSE received from server" << msg << flush;
+        }
+        else
+        {
+            ofLogWarning()  << "Unkown message received from server: " << msg << flush;
+        }
+    }
+
 }
 
 void TcpSyncManager::checkMessageAsServer(const std::string& msg, int clientid)
@@ -227,6 +233,35 @@ void TcpSyncManager::pauseAllVideos()
     }
 }
 
+void TcpSyncManager::stopAllVideos()
+{
+    if (m_isServer)
+    {
+        if (m_server.isConnected())
+        {
+            ofLogNotice() << "sending STOP command" << flush;
+
+            calcNextActionTime();
+            std::string stopCommand = CMD_STOP + CMD_DELIMITER + ofToString(m_timeForAction);
+
+            for (int i = 0; i < m_server.getLastID(); i++)
+            {
+                if (m_server.isClientConnected(i)) {
+
+                    m_server.send(i, stopCommand);
+                }
+            }
+            m_nextAction = STOP_ACTION;
+        }
+    }
+    else {
+        if (m_client.isConnected())
+        {
+            m_client.send(CMD_STOP);
+        }
+    }
+}
+
 uint64_t TcpSyncManager::getUnixTimestampMs()
 {
     return std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -265,6 +300,7 @@ void TcpSyncManager::doAction()
         if (m_player->isPlaying())
         {
             m_player->stop();
+            m_player->setFrame(0);
         }
         break;
     case NO_ACTION:

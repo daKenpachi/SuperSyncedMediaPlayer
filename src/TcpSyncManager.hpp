@@ -22,6 +22,7 @@ public:
     
     void playAllVideos();
     void pauseAllVideos();
+    void stopAllVideos();
 
     static uint64_t getUnixTimestampMs();
     
@@ -94,6 +95,7 @@ private:
     
     const std::string CMD_PLAY = "SuperSync_Play";
     const std::string CMD_PAUSE = "SuperSync_Pause";
+    const std::string CMD_STOP= "SuperSync_Stop";
     const std::string CMD_HELLO = "SuperSync_Hello";
     const std::string CMD_DELIMITER = ":::";
 
@@ -102,6 +104,7 @@ private:
     uint64_t m_timeForAction = 0;
 
     void updateAsServer();
+    void updateAsClient();
     void checkMessageAsServer(const std::string& msg, int clientid);
 };
 

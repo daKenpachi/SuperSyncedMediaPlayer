@@ -21,8 +21,7 @@ void ofApp::setup(){
     m_syncManager.setup(m_xmlSettings, &m_videoPlayer);
     
     m_videoPlayer.setVolume(0.5);
-    m_videoPlayer.play();
-    m_videoPlayer.setPaused(true);
+    m_videoPlayer.setFrame(0);
 
     //m_panel.setup();
     //m_panel.add(m_label.setup("Labename", "Ahoi, Ophelia"));
@@ -47,10 +46,15 @@ void ofApp::keyPressed(int key){
     {
         if(m_videoPlayer.isPlaying())
         {
-            m_syncManager.pauseAllVideos();
+            m_syncManager.pauseAllVideos(); // this will pause or unpause
         }
         else {
             m_syncManager.playAllVideos();
+        }
+    }
+    else if(key == OF_KEY_BACKSPACE) {
+        if(m_videoPlayer.isPlaying()) {
+            m_syncManager.stopAllVideos();
         }
     }
 }
