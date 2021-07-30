@@ -149,6 +149,14 @@ void TcpSyncManager::updateAsClient()
 
             ofLogNotice() << "PAUSE received from server" << msg << flush;
         }
+        else if (ofIsStringInString(msg, CMD_STOP))
+        {
+            std::vector<std::string> msgParts = ofSplitString(msg, CMD_DELIMITER);
+            m_nextAction = STOP_ACTION;
+            setNextActionTime(ofToInt64(msgParts.at(1)));
+
+            ofLogNotice() << "STOP received from server" << msg << flush;
+        }
         else
         {
             ofLogWarning()  << "Unkown message received from server: " << msg << flush;
@@ -168,6 +176,11 @@ void TcpSyncManager::checkMessageAsServer(const std::string& msg, int clientid)
     {
         ofLogNotice() << "PAUSE command received from client " << clientid << flush;
         pauseAllVideos();
+    }
+    else if (msg == CMD_STOP)
+    {
+        ofLogNotice() << "STOP command received from client " << clientid << flush;
+        stopAllVideos();
     }
     else if (msg != "")
     {
@@ -223,6 +236,7 @@ void TcpSyncManager::pauseAllVideos()
                 }
             }
             m_nextAction = PAUSE_ACTION;
+            ofLogNotice() << "sended: " << pauseCommand << flush;
         }
     }
     else {
@@ -252,6 +266,7 @@ void TcpSyncManager::stopAllVideos()
                 }
             }
             m_nextAction = STOP_ACTION;
+            ofLogNotice() << "sended: " << stopCommand << flush;
         }
     }
     else {

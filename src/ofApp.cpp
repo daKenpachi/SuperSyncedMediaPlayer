@@ -22,6 +22,7 @@ void ofApp::setup(){
     
     m_videoPlayer.setVolume(0.5);
     m_videoPlayer.setFrame(0);
+    m_videoPlayer.stop();
 
     //m_panel.setup();
     //m_panel.add(m_label.setup("Labename", "Ahoi, Ophelia"));
@@ -53,9 +54,7 @@ void ofApp::keyPressed(int key){
         }
     }
     else if(key == OF_KEY_BACKSPACE) {
-        if(m_videoPlayer.isPlaying()) {
-            m_syncManager.stopAllVideos();
-        }
+         m_syncManager.stopAllVideos();
     }
 }
 

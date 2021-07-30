@@ -36,7 +36,7 @@ public:
     const std::string MODE_AUTO = "Automatic";
 
     const int MAX_HANDSHAKE_RETRIES = 5;
-    const int TIME_OFFSET_FOR_COMMANDS = 500;
+    const int TIME_OFFSET_FOR_COMMANDS = 1000;
     
 private:
 
@@ -56,7 +56,7 @@ private:
         PLAY_ACTION,
         PAUSE_ACTION,
         STOP_ACTION
-    }NextAction;
+    } NextAction;
 
     typedef struct {
         std::vector<bool> validIds;
