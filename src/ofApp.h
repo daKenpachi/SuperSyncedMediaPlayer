@@ -26,10 +26,6 @@ public:
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
 
-    ofxPanel m_panel;
-    ofxLabel m_label;
-
-    ofxPanel m_videoControlPanel;
     ofVideoPlayer m_videoPlayer;
 
     ofxXmlSettings m_xmlSettings;

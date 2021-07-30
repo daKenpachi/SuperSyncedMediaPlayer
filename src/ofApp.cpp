@@ -21,25 +21,32 @@ void ofApp::setup(){
     double volume = m_xmlSettings.getValue(XML_TAG_VIDEO_VOLUME, 1.0);
     m_videoPlayer.setLoopState(OF_LOOP_NONE);
     m_videoPlayer.setVolume(volume);
+    //m_videoPlayer.stop();
     m_videoPlayer.setFrame(0);
-
-    //m_panel.setup();
-    //m_panel.add(m_label.setup("Labename", "Ahoi, Ophelia"));
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    static bool restarting = false;
     m_videoPlayer.update();
-    //m_videoPlayer.setSpeed(0.6);
-    if(m_videoPlayer.getIsMovieDone()) {
-        m_syncManager.playAllVideos();
+    bool movieDone = m_videoPlayer.getIsMovieDone();
+    int frame = m_videoPlayer.getCurrentFrame();
+    if (movieDone && m_syncManager.isServer()) {
+        if(!restarting) {
+            ofLogNotice() << "Restarting Videos" << std::flush;
+            m_syncManager.playAllVideos();
+            restarting = true;
+        }
+    }
+    else {
+        restarting = false;
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     m_videoPlayer.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
-    //m_panel.draw();
+
 }
 
 //--------------------------------------------------------------

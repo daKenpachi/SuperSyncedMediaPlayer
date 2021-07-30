@@ -65,6 +65,11 @@ void TcpSyncManager::setup(const ofxXmlSettings& settings, ofVideoPlayer* const 
     ofLogNotice() << " in Unix Epoch time ms: " << getUnixTimestampMs() << flush;
 }
 
+bool TcpSyncManager::isServer()
+{
+    return m_isServer;
+}
+
 void TcpSyncManager::update()
 {
     if (m_isServer)
