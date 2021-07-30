@@ -28,6 +28,7 @@ void TcpSyncManager::setup(const ofxXmlSettings& settings, ofVideoPlayer* const 
     int port = settings.getValue(XML_TAG_PORT, 0);
     std::string ipAddress = settings.getValue(XML_TAG_IP_ADDRESS, "localhost");
     std::string tcpMode = settings.getValue(XML_TAG_TCP_MODE, "Client");
+    m_timeOffset = settings.getValue(XML_TAG_TIME_OFFEST, 500);
     
     if (tcpMode == MODE_CLIENT)
     {
@@ -328,7 +329,7 @@ void TcpSyncManager::doAction()
 void TcpSyncManager::calcNextActionTime()
 {
     uint64_t currentTimeMillis = getUnixTimestampMs();
-    setNextActionTime(((currentTimeMillis / 100) * 100) + TIME_OFFSET_FOR_COMMANDS);
+    setNextActionTime(((currentTimeMillis / 100) * 100) + m_timeOffset);
 }
 
 void TcpSyncManager::setNextActionTime(uint64_t time)

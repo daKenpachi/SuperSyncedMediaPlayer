@@ -9,20 +9,18 @@ void ofApp::setup(){
     string loggingFile = m_xmlSettings.getValue(XML_TAG_LOGGING_FILE, "");
     if (loggingFile != "")
     {
-//#ifndef NDEBUG
-//        ofLogToFile(loggingFile, true);
-//#endif
-        ofLogNotice() << LOG_HEADER;
+        ofLogToFile(loggingFile, true);
     }
+    ofLogNotice() << LOG_HEADER;
 
     std::string videoName = m_xmlSettings.getValue(XML_TAG_VIDEO_FILE,"fingers.mov");
     m_videoPlayer.load(videoName);
     
     m_syncManager.setup(m_xmlSettings, &m_videoPlayer);
     
+    m_videoPlayer.stop();
     m_videoPlayer.setVolume(0.5);
     m_videoPlayer.setFrame(0);
-    m_videoPlayer.stop();
 
     //m_panel.setup();
     //m_panel.add(m_label.setup("Labename", "Ahoi, Ophelia"));

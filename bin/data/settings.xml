@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 <group />
 <VideoFile>drums.mp4</VideoFile>
-<LoggingFile>log.txt</LoggingFile>
+<LoggingFile></LoggingFile>
 <TCP>
     <Mode>Server</Mode>
     <Port>4464</Port>
-    <Address>127.0.0.1</Address>
+    <Address>192.168.0.120</Address>
 </TCP>
+<TimeOffset>500</TimeOffset>

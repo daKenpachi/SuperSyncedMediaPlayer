@@ -30,13 +30,13 @@ public:
     const std::string XML_TAG_PORT = "TCP:Port";
     const std::string XML_TAG_IP_ADDRESS = "TCP:Address";
     const std::string XML_TAG_TCP_MODE = "TCP:Mode";
+    const std::string XML_TAG_TIME_OFFEST = "TimeOffset";
     
     const std::string MODE_SERVER = "Server";
     const std::string MODE_CLIENT = "Client";
     const std::string MODE_AUTO = "Automatic";
 
     const int MAX_HANDSHAKE_RETRIES = 5;
-    const int TIME_OFFSET_FOR_COMMANDS = 1000;
     
 private:
 
@@ -99,6 +99,7 @@ private:
     const std::string CMD_HELLO = "SuperSync_Hello";
     const std::string CMD_DELIMITER = ":::";
 
+    int m_timeOffset;
     NextAction m_nextAction = NO_ACTION;
     WaitTimer m_waitTimer;
     uint64_t m_timeForAction = 0;
