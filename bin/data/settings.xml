@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <group />
 <VideoFile>drums.mp4</VideoFile>
+<VideoVolume>0.7</VideoVolume>
 <LoggingFile></LoggingFile>
 <TCP>
     <Mode>Server</Mode>

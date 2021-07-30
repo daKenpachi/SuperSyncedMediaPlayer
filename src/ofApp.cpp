@@ -18,8 +18,9 @@ void ofApp::setup(){
     
     m_syncManager.setup(m_xmlSettings, &m_videoPlayer);
     
-    m_videoPlayer.stop();
-    m_videoPlayer.setVolume(0.5);
+    double volume = m_xmlSettings.getValue(XML_TAG_VIDEO_VOLUME, 1.0);
+    m_videoPlayer.setLoopState(OF_LOOP_NONE);
+    m_videoPlayer.setVolume(volume);
     m_videoPlayer.setFrame(0);
 
     //m_panel.setup();
@@ -30,6 +31,9 @@ void ofApp::setup(){
 void ofApp::update(){
     m_videoPlayer.update();
     //m_videoPlayer.setSpeed(0.6);
+    if(m_videoPlayer.getIsMovieDone()) {
+        m_syncManager.playAllVideos();
+    }
 }
 
 //--------------------------------------------------------------
