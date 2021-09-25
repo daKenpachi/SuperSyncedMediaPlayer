@@ -14,6 +14,14 @@ TcpSyncManager::TcpSyncManager(): m_waitTimer(this)
 
 TcpSyncManager::~TcpSyncManager()
 {
+    if (m_isServer)
+    {
+        m_server.close();
+    }
+    else
+    {
+        m_client.close();
+    }
     if (m_waitTimer.isThreadRunning())
     {
         m_waitTimer.waitForThread();
