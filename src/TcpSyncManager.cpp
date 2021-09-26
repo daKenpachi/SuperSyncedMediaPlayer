@@ -297,6 +297,32 @@ uint64_t TcpSyncManager::getUnixTimestampMs()
         std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
+std::string TcpSyncManager::getConnectionInfo()
+{
+    if (m_isServer)
+    {
+        if (m_server.isConnected())
+        {
+            return "running";
+        }
+        else
+        {
+            return "stopped";
+        }
+    }
+    else
+    {
+        if (m_client.isConnected())
+        {
+            return "connected";
+        }
+        else
+        {
+            return "disconnected";
+        }
+    }
+}
+
 void TcpSyncManager::threadedFunction()
 {
         // start

@@ -31,6 +31,10 @@ public:
     ofxXmlSettings m_xmlSettings;
     
     TcpSyncManager m_syncManager;
+    
+    ofxPanel m_infoPanel;
+    ofxLabel m_infoLabel1;
+    ofxLabel m_infoLabel2;
 
 private:
     const std::string XML_TAG_VIDEO_FILE = "VideoFile";
@@ -40,4 +44,7 @@ private:
     const std::string LOG_HEADER = " -- Started SuperSyncedMediaPlayer -- ";
 
     const int OF_KEY_SPACE = 32;
+    
+    const int INFO_PANEL_COUNT_DOWN_VALUE = 250;
+    int m_infoPanelCountdown = INFO_PANEL_COUNT_DOWN_VALUE;
 };

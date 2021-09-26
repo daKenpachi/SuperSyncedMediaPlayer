@@ -21,8 +21,12 @@ void ofApp::setup(){
     double volume = m_xmlSettings.getValue(XML_TAG_VIDEO_VOLUME, 1.0);
     m_videoPlayer.setLoopState(OF_LOOP_NONE);
     m_videoPlayer.setVolume(volume);
-    //m_videoPlayer.stop();
+    m_videoPlayer.setPaused(true);
     m_videoPlayer.setFrame(0);
+    
+    m_infoPanel.setup();
+    m_infoPanel.add(m_infoLabel1.setup("Client/Server", ""));
+    m_infoPanel.add(m_infoLabel2.setup("Video", "stopped"));
 }
 
 //--------------------------------------------------------------
@@ -41,11 +45,43 @@ void ofApp::update(){
     else {
         restarting = false;
     }
+    
+
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
     m_videoPlayer.draw(0, 0, ofGetWindowWidth(), ofGetWindowHeight());
+    if (m_syncManager.isServer())
+    {
+        m_infoLabel1.setName("Server");
+    }
+    else
+    {
+        m_infoLabel1.setName("Client");
+    }
+    m_infoLabel1 = m_syncManager.getConnectionInfo();
+    
+    if (m_videoPlayer.isPlaying())
+    {
+        if (m_videoPlayer.isPaused())
+        {
+            m_infoLabel2 = "paused";
+        }
+        else
+        {
+            m_infoLabel2 = "playing";
+        }
+    }
+    else
+    {
+        m_infoLabel2 = "stopped";
+    }
+    if (m_infoPanelCountdown > 0)
+    {
+        m_infoPanel.draw();
+        m_infoPanelCountdown --;
+    }
 
 }
 
@@ -74,7 +110,7 @@ void ofApp::keyReleased(int key){
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
-
+    m_infoPanelCountdown = INFO_PANEL_COUNT_DOWN_VALUE;
 }
 
 //--------------------------------------------------------------

@@ -39,6 +39,7 @@ public:
     const int MAX_HANDSHAKE_RETRIES = 5;
 
     bool isServer();
+    std::string getConnectionInfo();
     
 private:
 
